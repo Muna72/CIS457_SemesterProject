@@ -22,7 +22,7 @@ public class MediaPanel extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.drawImage(image, 5, 10, this);
+        g.drawImage(image, 300, 150, this);
     }
 
 }

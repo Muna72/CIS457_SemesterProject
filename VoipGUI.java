@@ -32,18 +32,23 @@ public class VoipGUI extends JFrame implements ActionListener {
     MediaPanel screen;
 
     //define buttons
-    JButton connect;
-    JButton disconnect;
+    private JButton connect;
+    private JButton disconnect;
 
     //define text fields
-    JTextField serverHostName;
-    JTextField portNum;
-    JTextField userName;
-    JTextField hostName;
+    private JTextField serverHostName;
+    private JTextField portNum;
+    private JTextField userName;
+    private JTextField hostName;
 
     //define chat text areas
     private JTextArea chat;
     public JTextField messageInput;
+
+    //define font
+    private Font messageFont = new Font("SansSerif Bold", Font.PLAIN, 16);
+    private Font systemFont = new Font("SansSerif Bold", Font.BOLD, 20);
+    private Font uiFont = new Font("SansSerif Bold", Font.BOLD, 13);
 
     //define JLabels
     private JLabel serverHostnameLabel;
@@ -101,7 +106,6 @@ public class VoipGUI extends JFrame implements ActionListener {
 
         setLayout(new GridBagLayout());
         GridBagConstraints position = new GridBagConstraints();
-        Font font = new Font("SansSerif Bold", Font.BOLD, 14);
         TitledBorder border;
 
         //Adding all panels to JFrame
@@ -147,12 +151,10 @@ public class VoipGUI extends JFrame implements ActionListener {
         position.insets =  new Insets(-690, -300, 0, 2);
         add(chatArea,position);
 
-        font = new Font("SansSerif Bold", Font.PLAIN, 18);
-
         //Adding text chat input and output areas
         chat = new JTextArea();
         chat.setEditable(false);
-        chat.setFont(font);
+        chat.setFont(systemFont);
         chat.setPreferredSize(new Dimension(380, 500));
         position = makeConstraints(0, 0, 1, 1, GridBagConstraints.LINE_START);
         position.insets =  new Insets(-200, 0, 0, 0);
@@ -171,22 +173,20 @@ public class VoipGUI extends JFrame implements ActionListener {
         serverHostnameLabel.setBorder(new EmptyBorder(10, 0, 30, 0));
         input.add(serverHostnameLabel, position);
 
-        font = new Font("SansSerif Bold", Font.BOLD, 13);
-
         portNumLabel = new JLabel("Port:");
-        portNumLabel.setFont(font);
+        portNumLabel.setFont(uiFont);
         position = makeConstraints(3, 1, 1, 1, GridBagConstraints.LINE_START);
         position.insets =  new Insets(7, 20, 0, 0);
         input.add(portNumLabel, position);
 
         userNameLabel = new JLabel("Username:");
-        userNameLabel.setFont(font);
+        userNameLabel.setFont(uiFont);
         position = makeConstraints(1, 2, 1, 1, GridBagConstraints.LINE_START);
         position.insets =  new Insets(10, 15, 20, 20);
         input.add(userNameLabel, position);
 
         hostNameLabel = new JLabel("Hostname:");
-        hostNameLabel.setFont(font);
+        hostNameLabel.setFont(uiFont);
         position = makeConstraints(3, 2, 1, 1, GridBagConstraints.LINE_START);
         position.insets =  new Insets(15, 20, 0, 0);
         input.add(hostNameLabel, position);
@@ -299,11 +299,13 @@ public class VoipGUI extends JFrame implements ActionListener {
 
         if (e.getSource() == messageInput) {
             chat.append("You just typed in: " + messageInput.getText() + " \n");
+            messageInput.setText("");
         }
 
         //set running variable to false if STOP button
         if (e.getSource() == connect) {
             chat.append("Hello, " + userName.getText() + "! \n");
+            chat.setFont(messageFont);
            /* if(!serverHostName.getText().equals("") && !portNum.getText().equals("") &&
                     !userName.getText().equals("") && !hostName.getText().equals("")) {
                 try {
