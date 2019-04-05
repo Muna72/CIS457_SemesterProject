@@ -126,10 +126,10 @@ public class VoipGUI extends JFrame implements ActionListener {
         add(viewArea,position);
 
         screen = new MediaPanel();
-        screen.setPreferredSize(new Dimension(1000, 500));
+        screen.setPreferredSize(new Dimension(970, 480));
         screen.setBorder(new LineBorder(Color.BLACK, 3));
-        position = makeConstraints(10, 4, 1, 3, GridBagConstraints.LINE_END);
-        position.insets =  new Insets(0, 0, 0, -280);
+        position = makeConstraints(0, 0, 1, 1, GridBagConstraints.LINE_START);
+        position.insets =  new Insets(0, 0, 0, 0);
         viewArea.add(screen,position);
 
         //Adding all panels to JFrame
