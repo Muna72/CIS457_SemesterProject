@@ -4,6 +4,8 @@ import java.util.Scanner;
 import java.util.ArrayList;
 import java.io.ObjectOutputStream;
 import java.util.stream.Stream;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 public class Server{
 	private Socket socket;
 	private ServerSocket server;
@@ -56,7 +58,24 @@ class ClientHandler{
 				}
 
 			}catch(Exception i){System.out.println(i);};
-		}).start();}
+		}).start();
+	//UDP
+	new Thread(()->{
+				try{
+				DatagramSocket ds =new DatagramSocket(9091);
+				byte[] receive=new byte[65535];
+				DatagramPacket DpReceive = null;
+				while(true){
+				DpReceive = new DatagramPacket(receive, receive.length);
+				ds.receive(DpReceive);
+				System.out.println("Client : -"+ new String(receive));
+				receive= new byte[65535];
+				}	
+				}
+				catch(Exception e){
+					System.err.println(e);}
+			}).start();
+	}
 }
 
 
