@@ -33,7 +33,6 @@ public class VoipGUI extends JFrame implements ActionListener {
 
     //define instances of client and server
     Client me;
-    Server voiceServer;
 
     //define buttons
     private JButton connect;
@@ -103,7 +102,6 @@ public class VoipGUI extends JFrame implements ActionListener {
         firstTimeStartPressed = true;
         availableFileInfo = new ArrayList<Object>();
         stringsToDisplay = new ArrayList<String>();
-        voiceServer = new Server();
 
         setLayout(new GridBagLayout());
         GridBagConstraints position = new GridBagConstraints();
