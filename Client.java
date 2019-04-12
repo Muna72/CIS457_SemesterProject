@@ -59,6 +59,8 @@ public class Client{
 	private SourceDataLine sDL;
 
 	//private ObjectInputStream ois;
+
+	VoipGUI myGUI = new VoipGUI();
 	
 	/**
 	 * Constructor taking in the user's ip and the username
@@ -86,7 +88,7 @@ public class Client{
 						p = (Packet)ois.readObject();
 						if(p.type==CommandType.MESSAGE){
 						//System.out.println(p.uname+": "+p.message);
-							//VoipGUI.chat.append(p.uname + ": " + p.message);
+							myGUI.chat.append(p.uname + ": " + p.message);
 					}}
 				}catch(Exception e){
 					System.err.println(e);}
