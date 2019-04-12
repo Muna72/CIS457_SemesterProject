@@ -80,7 +80,7 @@ public class Client{
 	}
 	public static void main(String args[]){
 		Scanner sc = new Scanner(System.in);
-		System.out.println("Enter port username");
+		System.out.println("Enter IP Username");
 		StringTokenizer s = new StringTokenizer(sc.nextLine());
 		Client client = new Client(s.nextToken(), s.nextToken());
 
