@@ -43,21 +43,7 @@ public class Client{
                     System.err.println(e);}
             }).start();
             //UDP Sending
-            new Thread(()->{
-                try{
-                    DatagramSocket ds = new DatagramSocket();
-                    byte buf[] = null;
-                    String testing[]={"This","is an example of a ", "udp","String being ","broadcasted "};
-                    InetAddress ipAddress=InetAddress.getByName(ip);
-                    for(int i =0; i<testing.length;i++){
-                        buf=testing[i].getBytes();
-                        DatagramPacket dpSend= new DatagramPacket(buf,buf.length,ipAddress, 9091);
-                        ds.send(dpSend);}
-                }catch(Exception e){
-                    System.err.println(e);
-                }
-            }).start();
-            new Thread(()->{
+	    new Thread(()->{
                 try{
                     byte[] buffer;
                     DatagramPacket packet;
@@ -72,6 +58,24 @@ public class Client{
                     }
                 }catch(Exception e){System.out.println("Error "+e);}
             }).start();
+	
+	    	    new Thread(()->{
+		    DatagramPacket packet; 
+		    byte[] buffer;
+		    InetAddress address;
+		    DatagramSocket socket;
+                    String testing[]={"This","is an example of a ", "udp","String being ","broadcasted "};
+		    for(int i =0; i<testing.length;i++){
+		    try{
+			    socket= new DatagramSocket();
+			    buffer=testing[i].getBytes();
+		    address=InetAddress.getByName("233.0.0.1");
+		    packet = new DatagramPacket(buffer, buffer.length, address, 9092);
+		    socket.send(packet);		
+		    }catch(IOException e){
+		    }}
+	    }).start();
+
 	    
 	 
 	    VoipGUI.messageInput.addActionListener(e->{
