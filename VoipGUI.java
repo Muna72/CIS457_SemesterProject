@@ -35,7 +35,7 @@ public class VoipGUI extends JFrame implements ActionListener {
     Client me;
 
     //define buttons
-    private JButton connect;
+    public static JButton connect;
     private JButton disconnect;
 
     //define text fields
@@ -43,8 +43,8 @@ public class VoipGUI extends JFrame implements ActionListener {
     private JTextField userName;
 
     //define chat text areas
-    public JTextArea chat;
-    public JTextField messageInput;
+    public static JTextArea chat;
+    public static JTextField messageInput;
 
     //define font
     private Font messageFont = new Font("SansSerif Bold", Font.PLAIN, 16);
@@ -273,11 +273,6 @@ public class VoipGUI extends JFrame implements ActionListener {
             System.exit(1);
         }
 
-        if (e.getSource() == messageInput) {
-            chat.append("You just typed in: " + messageInput.getText() + " \n");
-            messageInput.setText("");
-        }
-
         //set running variable to false if STOP button
         if (e.getSource() == connect) {
             chat.append("Hello, " + userName.getText() + "! \n");
@@ -351,4 +346,3 @@ public class VoipGUI extends JFrame implements ActionListener {
         return rtn;
     }
 }
-

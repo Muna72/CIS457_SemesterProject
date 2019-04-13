@@ -72,24 +72,24 @@ public class Client{
                     }
                 }catch(Exception e){System.out.println("Error "+e);}
             }).start();
+	    
+	 
+	    VoipGUI.messageInput.addActionListener(e->{
+		    try{
+			    Packet p = new Packet(CommandType.MESSAGE);
+			    p.uname=uname;
 
-            while(!line.equals("q")){
-                try{
-                    //line=br.readLine();
-                    System.out.println("HELLO");
-		    Packet p = new Packet(CommandType.MESSAGE);
-                    p.uname=uname;
+			    p.message=VoipGUI.messageInput.getText()+"\n";
+			    oos.writeObject(p);
 
-                    p.message=line;
-                    oos.writeObject(p);
+		    }
+		    catch(IOException i){
+			    System.out.println(i);
+		    }
+	    });
 
-                }
-                catch(IOException i){
-                    System.out.println(i);
-                }
-            }
-            socket.close();
-        }
+	 }
+
         catch(Exception i){
             System.out.println(i);
         }
