@@ -36,7 +36,8 @@ class ClientHandler{
 	private Packet packet;
 	private ObjectOutputStream oos;
 	public ClientHandler(Socket socket){
-		//Response word
+		try{
+			DatagramSocket ds =new DatagramSocket(9091);
 		new Thread(()->{
 			try {
 				InputStream is=socket.getInputStream();
@@ -63,7 +64,6 @@ class ClientHandler{
 		new Thread(()->{
 			try{
 				DatagramSocket s= new DatagramSocket();
-				DatagramSocket ds =new DatagramSocket(9091);
 				byte[] receive=new byte[256];
 				DatagramPacket dpReceive = null;
 				DatagramPacket dpSend =null;
@@ -82,5 +82,7 @@ class ClientHandler{
 			catch(Exception e){
 				System.err.println(e);}
 		}).start();
+
+		}catch(IOException e){}
 	}
 }
