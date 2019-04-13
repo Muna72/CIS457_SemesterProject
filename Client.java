@@ -76,7 +76,8 @@ public class Client{
             while(!line.equals("q")){
                 try{
                     //line=br.readLine();
-                    Packet p = new Packet(CommandType.MESSAGE);
+                    System.out.println("HELLO");
+		    Packet p = new Packet(CommandType.MESSAGE);
                     p.uname=uname;
 
                     p.message=line;
