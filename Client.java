@@ -16,10 +16,9 @@ public class Client{
     private String ip;
 
     private ObjectInputStream ois;
-    VoipGUI myGUI = new VoipGUI();
 
     public Client(String ip, String uname){
-        try{
+	 try{
             this.ip = ip;
             socket = new Socket(ip, 9090);
             OutputStream os = socket.getOutputStream();
@@ -28,9 +27,8 @@ public class Client{
             InputStream is= socket.getInputStream();
             ObjectInputStream ois = new ObjectInputStream(is);
 
-            br = new BufferedReader(new InputStreamReader(System.in));
+            //br = new BufferedReader(new InputStreamReader(System.in));
             String line="";
-            //gets name
             new Thread(()->{
                 Packet p = new Packet(CommandType.MESSAGE);
                 try{
@@ -39,7 +37,7 @@ public class Client{
                         p = (Packet)ois.readObject();
                         if(p.type==CommandType.MESSAGE){
                             //System.out.println(p.uname+": "+p.message);
-                            myGUI.chat.append(p.uname + ": " + p.message);
+                            VoipGUI.chat.append(p.uname + ": " + p.message);
                         }}
                 }catch(Exception e){
                     System.err.println(e);}
@@ -77,7 +75,7 @@ public class Client{
 
             while(!line.equals("q")){
                 try{
-                    line=br.readLine();
+                    //line=br.readLine();
                     Packet p = new Packet(CommandType.MESSAGE);
                     p.uname=uname;
 
