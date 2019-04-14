@@ -79,18 +79,28 @@ public class Client{
 	    
 	 
 	    VoipGUI.messageInput.addActionListener(e->{
-		    try{
-			    Packet p = new Packet(CommandType.MESSAGE);
-			    p.uname=uname;
+             try{
+                 Packet p = new Packet(CommandType.MESSAGE);
+                 p.uname=uname;
 
-			    p.message=VoipGUI.messageInput.getText()+"\n\n";
-			    oos.writeObject(p);
+                 p.message=VoipGUI.messageInput.getText()+"\n\n";
+                 oos.writeObject(p);
 
-		    }
-		    catch(IOException i){
-			    System.out.println(i);
-		    }
-	    });
+             }
+             catch(IOException i){
+                 System.out.println(i);
+             }
+         });
+
+         VoipGUI.disconnect.addActionListener(e->{
+             try{
+                 socket.close();
+                 VoipGUI.chat.append("Connection Terminated");
+             }
+             catch(IOException i){
+                 System.out.println(i);
+             }
+         });
 
 	 }
 

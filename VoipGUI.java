@@ -36,7 +36,7 @@ public class VoipGUI extends JFrame implements ActionListener {
 
     //define buttons
     public static JButton connect;
-    private JButton disconnect;
+    public static JButton disconnect;
 
     //define text fields
     private JTextField serverHostName;
@@ -289,9 +289,9 @@ public class VoipGUI extends JFrame implements ActionListener {
             }
         }
 
-        if (e.getSource() == disconnect) {
-                //TODO do not close out program, only terminate connection
-        }
+       /*if (e.getSource() == disconnect) {
+                Client.
+        } */
 
     }
 
