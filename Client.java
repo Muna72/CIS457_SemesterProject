@@ -17,7 +17,7 @@ public class Client{
 
     private ObjectInputStream ois;
 
-    public Client(String ip, String uname){
+    public Client(String ip, String uname, boolean term){
 	 try{
             this.ip = ip;
             socket = new Socket(ip, 9090);
@@ -27,8 +27,7 @@ public class Client{
             InputStream is= socket.getInputStream();
             ObjectInputStream ois = new ObjectInputStream(is);
 
-            //br = new BufferedReader(new InputStreamReader(System.in));
-            String line="";
+            br = new BufferedReader(new InputStreamReader(System.in));
             new Thread(()->{
                 Packet p = new Packet(CommandType.MESSAGE);
                 try{
@@ -36,9 +35,13 @@ public class Client{
                     while(p != null ||p.type==CommandType.MESSAGE){
                         p = (Packet)ois.readObject();
                         if(p.type==CommandType.MESSAGE){
-                            //System.out.println(p.uname+": "+p.message);
-                            VoipGUI.chat.append(p.uname + ": " + p.message);
-                        }}
+                           
+				if(term) 
+					System.out.println(p.uname+": "+p.message);
+				else 
+					VoipGUI.chat.append(p.uname + ": " + p.message);
+                        }
+		    }
                 }catch(Exception e){
                     System.err.println(e);}
             }).start();
@@ -78,29 +81,34 @@ public class Client{
 
 	    
 	 
-	    VoipGUI.messageInput.addActionListener(e->{
-             try{
-                 Packet p = new Packet(CommandType.MESSAGE);
-                 p.uname=uname;
+	   if(term){
+		   Scanner sc = new Scanner(System.in);
+		   while(true){
+			    try{
 
-                 p.message=VoipGUI.messageInput.getText()+"\n\n";
-                 oos.writeObject(p);
+			    Packet p = new Packet(CommandType.MESSAGE);
+			    p.uname=uname;
+			    p.message=sc.nextLine();
+			    oos.writeObject(p);
+		    }
+		    catch(IOException i){
+			    System.out.println(i);
+		    }
+		}}
+	   else 
+		    VoipGUI.messageInput.addActionListener(e->{
+		    try{
+			    Packet p = new Packet(CommandType.MESSAGE);
+			    p.uname=uname;
 
-             }
-             catch(IOException i){
-                 System.out.println(i);
-             }
-         });
+			    p.message=VoipGUI.messageInput.getText()+"\n";
+			    oos.writeObject(p);
 
-         VoipGUI.disconnect.addActionListener(e->{
-             try{
-                 socket.close();
-                 VoipGUI.chat.append("Connection Terminated");
-             }
-             catch(IOException i){
-                 System.out.println(i);
-             }
-         });
+		    }
+		    catch(IOException i){
+			    System.out.println(i);
+		    }
+	    });
 
 	 }
 
@@ -113,7 +121,7 @@ public class Client{
         Scanner sc = new Scanner(System.in);
         System.out.println("Enter IP Username");
         StringTokenizer s = new StringTokenizer(sc.nextLine());
-        Client client = new Client(s.nextToken(), s.nextToken());
+        Client client = new Client(s.nextToken(), s.nextToken(),true);
 
     }
 }
