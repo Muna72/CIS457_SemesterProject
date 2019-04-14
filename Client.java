@@ -83,7 +83,7 @@ public class Client{
 			    Packet p = new Packet(CommandType.MESSAGE);
 			    p.uname=uname;
 
-			    p.message=VoipGUI.messageInput.getText()+"\n";
+			    p.message=VoipGUI.messageInput.getText()+"\n\n";
 			    oos.writeObject(p);
 
 		    }
