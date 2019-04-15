@@ -120,6 +120,16 @@ public class Client{
 					}
 				});
 
+            VoipGUI.disconnect.addActionListener(e->{
+                try{
+                    socket.close();
+                    VoipGUI.chat.append("Connection Terminated");
+                }
+                catch(IOException i){
+                    System.out.println(i);
+                }
+            });
+
 		}
 
 		catch(Exception i){

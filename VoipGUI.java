@@ -138,14 +138,18 @@ public class VoipGUI extends JFrame implements ActionListener {
         //Adding all panels to JFrame
         optionsPanel = new JPanel(new GridBagLayout());
         optionsPanel.setPreferredSize(new Dimension(1000, 100));
-        optionsPanel.setBackground(Color.RED);
         position = makeConstraints(10, 6, 1, 3, GridBagConstraints.LINE_END);
         position.insets =  new Insets(0, 0, 0, -280);
         add(optionsPanel,position);
 
         chatArea = new JPanel(new GridBagLayout());
         chatArea.setPreferredSize(new Dimension(400, 790));
-        chatArea.setBackground(Color.BLUE);
+        border = new TitledBorder("Chat");
+        border.setBorder(new LineBorder(Color.BLACK, 3));
+        border.setTitleFont(new Font("Arial", Font.BOLD, 20));
+        border.setTitleJustification(TitledBorder.CENTER);
+        border.setTitlePosition(TitledBorder.TOP);
+        chatArea.setBorder(border);
         position = makeConstraints(3, 6, 1, 2, GridBagConstraints.LINE_END);
         position.insets =  new Insets(-690, -300, 0, 2);
         add(chatArea,position);
@@ -278,7 +282,7 @@ public class VoipGUI extends JFrame implements ActionListener {
             chat.setFont(messageFont);
            if(!serverHostName.getText().equals("") && !userName.getText().equals("")) {
                 try {
-                    me = new Client(serverHostName.getText(), userName.getText());
+                    me = new Client(serverHostName.getText(), userName.getText(), false);
                     disconnect.setEnabled(true);
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -288,10 +292,6 @@ public class VoipGUI extends JFrame implements ActionListener {
                 JOptionPane.showMessageDialog(null, "All connection setup fields must have values");
             }
         }
-
-       /*if (e.getSource() == disconnect) {
-                Client.
-        } */
 
     }
 
