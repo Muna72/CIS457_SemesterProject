@@ -57,7 +57,8 @@ public class Client{
 						buffer= new byte[1024];
 						packet= new DatagramPacket(buffer, buffer.length);
 						socket.receive(packet);
-						System.out.println(new String(packet.getData()));
+							if(!packet.getAddress().equals(InetAddress.getByName(getIP()))){
+						System.out.println(new String(packet.getData()));}
 					}
 				}catch(Exception e){System.out.println("Error "+e);}
 			}).start();
@@ -134,9 +135,18 @@ public class Client{
 
 		catch(Exception i){
 			System.out.println(i);
-		}
+		}}
+	public String getIP(){
+		try{
+			DatagramSocket socket = new DatagramSocket();
+			socket.connect(InetAddress.getByName("8.8.8.8"),10002);
+			return socket.getLocalAddress().getHostAddress();
+		}catch(Exception e){
+			System.err.println(e);
+		}	
+		return null;}
 
-	}
+	
 	public static void main(String args[]){
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Enter IP Username");
