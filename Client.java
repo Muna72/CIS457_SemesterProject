@@ -57,9 +57,9 @@ public class Client{
 						buffer= new byte[1024];
 						packet= new DatagramPacket(buffer, buffer.length);
 						socket.receive(packet);
-							if(!packet.getAddress().equals(InetAddress.getByName(getIP()))){
+				//			if(!packet.getAddress().equals(InetAddress.getByName(getIP()))){
 						System.out.println(new String(packet.getData()));}
-					}
+				//	}
 				}catch(Exception e){System.out.println("Error "+e);}
 			}).start();
 
@@ -80,12 +80,12 @@ public class Client{
 						packet = new DatagramPacket(buffer, buffer.length, address, 9092);
 						socket.send(packet);		
 					}
-					ac.start(t->{
+			/*		ac.start(t->{
 						try{
 							DatagramSocket s= new DatagramSocket();
 							s.send(new DatagramPacket(t,t.length,address, 9092));}
 						catch(Exception e){System.out.println(e);};});
-
+*/
 				}catch(Exception e){
 				}
 			}).start();

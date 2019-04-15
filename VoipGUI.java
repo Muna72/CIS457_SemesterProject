@@ -41,7 +41,6 @@ public class VoipGUI extends JFrame implements ActionListener {
     //define text fields
     private JTextField serverHostName;
     private JTextField userName;
-    private JScrollPane scroll;
 
     //define chat text areas
     public static JTextArea chat;
@@ -70,7 +69,7 @@ public class VoipGUI extends JFrame implements ActionListener {
         try {
             VoipGUI gui = new VoipGUI();
             gui.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-            gui.setTitle("VoIP Client");
+            gui.setTitle("FTP Client");
             gui.setPreferredSize(new Dimension(1800, 1000));
             gui.pack();
             gui.setVisible(true);
@@ -111,6 +110,7 @@ public class VoipGUI extends JFrame implements ActionListener {
         //Adding all panels to JFrame
         input = new JPanel(new GridBagLayout());
         input.setPreferredSize(new Dimension(1000, 200));
+        //input.setBorder(new EmptyBorder(15, 0, 30, 20));
         border = new TitledBorder("Connection Input Information");
         border.setBorder(new LineBorder(Color.BLACK, 3));
         border.setTitleFont(new Font("Arial", Font.BOLD, 20));
@@ -138,18 +138,14 @@ public class VoipGUI extends JFrame implements ActionListener {
         //Adding all panels to JFrame
         optionsPanel = new JPanel(new GridBagLayout());
         optionsPanel.setPreferredSize(new Dimension(1000, 100));
+        optionsPanel.setBackground(Color.RED);
         position = makeConstraints(10, 6, 1, 3, GridBagConstraints.LINE_END);
         position.insets =  new Insets(0, 0, 0, -280);
         add(optionsPanel,position);
 
         chatArea = new JPanel(new GridBagLayout());
         chatArea.setPreferredSize(new Dimension(400, 790));
-        border = new TitledBorder("Chat");
-        border.setBorder(new LineBorder(Color.BLACK, 3));
-        border.setTitleFont(new Font("Arial", Font.BOLD, 20));
-        border.setTitleJustification(TitledBorder.CENTER);
-        border.setTitlePosition(TitledBorder.TOP);
-        chatArea.setBorder(border);
+        chatArea.setBackground(Color.BLUE);
         position = makeConstraints(3, 6, 1, 2, GridBagConstraints.LINE_END);
         position.insets =  new Insets(-690, -300, 0, 2);
         add(chatArea,position);
@@ -158,12 +154,10 @@ public class VoipGUI extends JFrame implements ActionListener {
         chat = new JTextArea();
         chat.setEditable(false);
         chat.setFont(systemFont);
+        chat.setPreferredSize(new Dimension(380, 500));
         position = makeConstraints(0, 0, 1, 1, GridBagConstraints.LINE_START);
         position.insets =  new Insets(-200, 0, 0, 0);
-        scroll = new JScrollPane(chat);
-        scroll.setPreferredSize(new Dimension(380, 500));
-        scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        chatArea.add(scroll, position);
+        chatArea.add((new JScrollPane(chat)), position);
 
         messageInput = new JTextField("Type a message...");
         messageInput.setPreferredSize(new Dimension(350, 30));
@@ -188,6 +182,7 @@ public class VoipGUI extends JFrame implements ActionListener {
         //Place the textfields
         serverHostName = new JTextField("", 20);
         position = makeConstraints(2, 1, 1, 1, GridBagConstraints.LINE_START);
+        //serverHostName.setMinimumSize(serverHostName.getPreferredSize());
         position.insets =  new Insets(15, 15, 0, 20);
         input.add(serverHostName, position);
 
@@ -206,6 +201,8 @@ public class VoipGUI extends JFrame implements ActionListener {
         disconnect = new JButton();
         try {
             Image img = ImageIO.read(getClass().getResource("images/hangup.png"));
+            //Image img = ImageIO.read(new File("images/hangup.png"));
+            //Image img = icon.getImage() ;
             Image newimg = img.getScaledInstance(70, 70,  java.awt.Image.SCALE_SMOOTH);
             ImageIcon icon = new ImageIcon( newimg );
             disconnect.setIcon(icon);
@@ -278,12 +275,12 @@ public class VoipGUI extends JFrame implements ActionListener {
 
         //set running variable to false if STOP button
         if (e.getSource() == connect) {
-            chat.append("Hello, " + userName.getText() + "! \n\n");
+            chat.append("Hello, " + userName.getText() + "! \n");
             chat.setFont(messageFont);
            if(!serverHostName.getText().equals("") && !userName.getText().equals("")) {
                 try {
-                    me = new Client(serverHostName.getText(), userName.getText(), false);
-                    disconnect.setEnabled(true);
+                    me = new Client(serverHostName.getText(), userName.getText(),false);
+
                 } catch (Exception ex) {
                     ex.printStackTrace();
                     System.out.println("Error setting up connection");
@@ -293,6 +290,40 @@ public class VoipGUI extends JFrame implements ActionListener {
             }
         }
 
+        if (e.getSource() == disconnect) {
+                //TODO do not close out program, only terminate connection
+        }
+        updateCommandLine();
+        //cmdLine.repaint();
+    }
+
+    //Method to update command line JPanel area
+    public void updateCommandLine() {
+
+        //cmdLine.removeAll();
+        //cmdLine.revalidate();
+        //cmdLine.repaint();
+
+        GridBagConstraints position = new GridBagConstraints();
+        position = makeConstraints(0, 0, 1, 1, GridBagConstraints.FIRST_LINE_START);
+        position.insets =  new Insets(-100, -240, 0, 0);
+
+        JList list = new JList(stringsToDisplay.toArray());
+        list.setLayoutOrientation(JList.VERTICAL);
+        list.setVisibleRowCount(10);
+        list.setFont(new Font("Arial", Font.PLAIN, 16));
+        //cmdLine.add(list, position);
+    }
+
+
+    //Method to set the width of all table columns
+    public void setColunmWidth(JTable table) {
+
+        TableColumnModel tcm = table.getColumnModel();
+
+        for (int i = 0; i < (tcm.getColumnCount()); i++) {
+            tcm.getColumn(i).setPreferredWidth(90);
+        }
     }
 
     /**
