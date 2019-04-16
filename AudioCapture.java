@@ -15,6 +15,7 @@ public class AudioCapture  {
     private TargetDataLine audioLine;
     public AudioFormat format;
     private AudioInputStream audioStream;
+    private AudioFormat audioFormat;
     private SourceDataLine sourceLine;
  
     private boolean isRunning;
@@ -74,11 +75,11 @@ interface GetAudio{
         //length may need to change
         audioStream = new AudioInputStream(bStream, format, bArray.length);
 
-        DataLine.Info info = new DataLine.Info(SourceDataLine.class, format);
+        DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
 
         try {
             sourceLine = (SourceDataLine) AudioSystem.getLine(info);
-            sourceLine.open(format);
+            sourceLine.open(audioFormat);
         } catch (LineUnavailableException e) {
             e.printStackTrace();
             System.exit(1);
