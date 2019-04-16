@@ -9,10 +9,6 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
-import javax.sound.sampled.*;
-import sun.audio.AudioData;
-import sun.audio.AudioDataStream;
-import sun.audio.AudioPlayer;
 public class Client{
 	private Socket socket;
 	private BufferedReader br;
@@ -22,6 +18,7 @@ public class Client{
 	private ObjectInputStream ois;
 
 	public Client(String ip, String uname, boolean term){
+				RealTimeAudioCapture ac= new RealTimeAudioCapture();
 		try{
 			this.ip = ip;
 			socket = new Socket(ip, 9090);
@@ -61,18 +58,15 @@ public class Client{
 						buffer= new byte[1024];
 						packet= new DatagramPacket(buffer, buffer.length);
 						socket.receive(packet);
-							if(!packet.getAddress().equals(InetAddress.getByName(getIP()))){
+							//if(!packet.getAddress().equals(InetAddress.getByName(getIP()))){
 						System.out.println(new String(packet.getData()));
-						AudioData audiodata = new AudioData(packet.getData());
-						AudioDataStream audioStream = new AudioDataStream(audiodata);
-						AudioPlayer.player.start(audioStream);	
+						ac.playAudio(packet.getData());
 							}
-					}
+					//}
 				}catch(Exception e){System.out.println("Error "+e);}
 			}).start();
 
 			new Thread(()->{
-				AudioCapture ac= new AudioCapture();
 				DatagramPacket packet; 
 				byte[] buffer;
 				InetAddress address;
@@ -88,9 +82,10 @@ public class Client{
 						packet = new DatagramPacket(buffer, buffer.length, address, 9092);
 						socket.send(packet);		
 					}
+
+					DatagramSocket s= new DatagramSocket();
 					ac.start(t->{
 						try{
-							DatagramSocket s= new DatagramSocket();
 							s.send(new DatagramPacket(t,t.length,address, 9092));}
 						catch(Exception e){System.out.println(e);};});
 
