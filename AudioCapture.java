@@ -1,16 +1,9 @@
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import javax.sound.sampled.AudioFileFormat;
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.DataLine;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.TargetDataLine;
- 
+import javax.sound.sampled.*;
+
 /**
  * A utility class provides general functions for recording sound.
  * @author www.codejava.net
@@ -20,7 +13,10 @@ public class AudioCapture  {
     private static final int BUFFER_SIZE = 4096;
     private ByteArrayOutputStream recordBytes;
     private TargetDataLine audioLine;
-    private AudioFormat format;
+    public AudioFormat format;
+    private AudioInputStream audioStream;
+    private AudioFormat audioFormat;
+    private SourceDataLine sourceLine;
  
     private boolean isRunning;
  
@@ -28,7 +24,7 @@ public class AudioCapture  {
      * Defines a default audio format used to record
      */
     AudioFormat getAudioFormat() {
-        float sampleRate = 16000;
+        float sampleRate = 44100;
         int sampleSizeInBits = 8;
         int channels = 2;
         boolean signed = true;
@@ -71,6 +67,46 @@ interface GetAudio{
             recordBytes.write(buffer, 0, bytesRead);
             byteArray.audio(buffer);
         }
+    }
+
+    public void playSound(byte[] bArray) {
+
+        ByteArrayInputStream bStream = new ByteArrayInputStream(bArray);
+        //length may need to change
+        audioStream = new AudioInputStream(bStream, format, bArray.length);
+
+        DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
+
+        try {
+            sourceLine = (SourceDataLine) AudioSystem.getLine(info);
+            sourceLine.open(audioFormat);
+        } catch (LineUnavailableException e) {
+            e.printStackTrace();
+            System.exit(1);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+
+        sourceLine.start();
+
+        int nBytesRead = 0;
+        byte[] abData = new byte[BUFFER_SIZE];
+        while (nBytesRead != -1) {
+            try {
+                nBytesRead = audioStream.read(abData, 0, abData.length);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (nBytesRead >= 0) {
+                @SuppressWarnings("unused")
+                int nBytesWritten = sourceLine.write(abData, 0, nBytesRead);
+            }
+        }
+
+        sourceLine.drain();
+        sourceLine.close();
+
     }
 
     /**
