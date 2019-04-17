@@ -127,16 +127,22 @@ public class VoipGUI extends JFrame implements ActionListener {
 
         viewArea = new JPanel(new GridBagLayout());
         viewArea.setPreferredSize(new Dimension(1000, 500));
-        viewArea.setBorder(new LineBorder(Color.BLACK, 3));
+        border = new TitledBorder("Audio File Display");
+        border.setBorder(new LineBorder(Color.BLACK, 3));
+        border.setTitleFont(new Font("Arial", Font.BOLD, 20));
+        border.setTitleJustification(TitledBorder.CENTER);
+        border.setTitlePosition(TitledBorder.TOP);
+        viewArea.setBorder(border);
+        //viewArea.setBorder(new LineBorder(Color.BLACK, 3));
         position = makeConstraints(10, 4, 1, 3, GridBagConstraints.LINE_END);
         position.insets =  new Insets(0, 0, 0, -280);
         add(viewArea,position);
 
         screen = new JPanel();
         screen.setLayout(new GridBagLayout());
-        screen.setPreferredSize(new Dimension(400, 380));
+        screen.setPreferredSize(new Dimension(300, 380));
         position = makeConstraints(0, 0, 1, 1, GridBagConstraints.LINE_START);
-        position.insets =  new Insets(50, -100, 0, 0);
+        position.insets =  new Insets(50, 20, 0, 0);
         viewArea.add(screen,position);
 
         //Adding all panels to JFrame
@@ -147,9 +153,16 @@ public class VoipGUI extends JFrame implements ActionListener {
         add(optionsPanel,position);
 
         chatArea = new JPanel(new GridBagLayout());
-        chatArea.setPreferredSize(new Dimension(400, 790));
+        border = new TitledBorder("Chat");
+        border.setBorder(new LineBorder(Color.BLACK, 3));
+        border.setTitleFont(new Font("Arial", Font.BOLD, 20));
+        border.setTitleJustification(TitledBorder.CENTER);
+        border.setTitlePosition(TitledBorder.TOP);
+        chatArea.setBorder(border);
+        //chatArea.setBorder(new LineBorder(Color.BLACK, 3));
+        chatArea.setPreferredSize(new Dimension(400, 700));
         position = makeConstraints(3, 6, 1, 2, GridBagConstraints.LINE_END);
-        position.insets =  new Insets(-690, -300, 0, 2);
+        position.insets =  new Insets(-800, -300, 0, 2);
         add(chatArea,position);
 
         //Adding text chat input and output areas
@@ -158,13 +171,13 @@ public class VoipGUI extends JFrame implements ActionListener {
         chat.setFont(systemFont);
         chat.setPreferredSize(new Dimension(380, 500));
         position = makeConstraints(0, 0, 1, 1, GridBagConstraints.LINE_START);
-        position.insets =  new Insets(-200, 0, 0, 0);
+        position.insets =  new Insets(-100, 0, 0, 0);
         chatArea.add((new JScrollPane(chat)), position);
 
         messageInput = new JTextField("Type a message...");
-        messageInput.setPreferredSize(new Dimension(350, 30));
+        messageInput.setPreferredSize(new Dimension(380, 30));
         position = makeConstraints(0, 0, 1, 1, GridBagConstraints.LINE_START);
-        position.insets =  new Insets(380, 0, 0, 0);
+        position.insets =  new Insets(460, 0, 0, 0);
         chatArea.add(messageInput, position);
 
         //Adding stats to searchArea JPanel
@@ -199,10 +212,12 @@ public class VoipGUI extends JFrame implements ActionListener {
         position.insets =  new Insets(40, 100, 0, 20);
         input.add(connect, position);
 
-        retreive = new JButton( "Retreive Audio Files" );
+        retreive = new JButton( "Retreive Audio Files >>>" );
         retreive.setForeground(Color.BLACK);
+        retreive.setFont(new Font("SansSerif Bold", Font.BOLD, 16));
+        retreive.setPreferredSize(new Dimension(220, 30));
         position = makeConstraints(0, 0, 1, 1, GridBagConstraints.LINE_START);
-        position.insets =  new Insets(-400, 25, 0, 0);
+        position.insets =  new Insets(-280, -200, 0, 0);
         viewArea.add(retreive, position);
 
         disconnect = new JButton();
