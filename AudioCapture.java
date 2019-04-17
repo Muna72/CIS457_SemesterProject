@@ -179,8 +179,8 @@ public class AudioCapture implements LineListener {
         stopper.start();
  
         // start Start the recording
-        recorder.start("ClientName.wav");
+        recorder.start("audioFiles/ClientName.wav");
         //Stop the recording
-        recorder.play("ClientName.wav");
+        recorder.play("audioFiles/ClientName.wav");
     }
 }
