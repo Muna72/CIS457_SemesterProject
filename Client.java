@@ -16,6 +16,7 @@ public class Client{
 	private String ip;
 
 	private ObjectInputStream ois;
+	RealTimeAudioCapture myCap = new RealTimeAudioCapture();
 
 	public Client(String ip, String uname, boolean term){
 				RealTimeAudioCapture ac= new RealTimeAudioCapture();
@@ -129,10 +130,39 @@ public class Client{
                     socket.close();
                     VoipGUI.chat.append("Connection Terminated");
                 }
-                catch(IOException i){
+                catch(Exception i){
                     System.out.println(i);
                 }
             });
+
+			VoipGUI.record.addActionListener(e->{
+				try{
+				//	myCap.start();
+				}
+				catch(Exception i){
+					System.out.println(i);
+				}
+			});
+
+			VoipGUI.stop.addActionListener(e->{
+				try{
+					myCap.stop();
+                    myCap.save(uname);
+				}
+				catch(Exception i){
+					System.out.println(i);
+				}
+			});
+
+			VoipGUI.sendAudio.addActionListener(e->{
+				try{
+
+					//TODO still need to send it
+				}
+				catch(Exception i){
+					System.out.println(i);
+				}
+			});
 
 		}
 

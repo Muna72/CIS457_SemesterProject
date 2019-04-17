@@ -96,13 +96,13 @@ interface GetAudio{
      * @param wavFile The file to be saved.
      * @throws IOException if any I/O error occurs.
      */
-    public void save(File wavFile) throws IOException {
+    public void save(String uname) throws IOException {
         byte[] audioData = recordBytes.toByteArray();
         ByteArrayInputStream bais = new ByteArrayInputStream(audioData);
         AudioInputStream audioInputStream = new AudioInputStream(bais, format,
                 audioData.length / format.getFrameSize());
  
-        AudioSystem.write(audioInputStream, AudioFileFormat.Type.WAVE, wavFile);
+        AudioSystem.write(audioInputStream, AudioFileFormat.Type.WAVE, new File("uname"));
  
         audioInputStream.close();
         recordBytes.close();
