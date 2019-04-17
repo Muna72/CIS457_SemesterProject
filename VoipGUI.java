@@ -22,21 +22,26 @@ public class VoipGUI extends JFrame implements ActionListener {
     private boolean first = true;
     private boolean firstTimeStartPressed;
     DecimalFormat df = new DecimalFormat("#.00");
-    ArrayList<Object>availableFileInfo;
-    ArrayList<String> stringsToDisplay;
+    ArrayList<JLabel>availableFileInfo;
+
 
     private JPanel input;
     private JPanel viewArea;
     private JPanel optionsPanel;
     private JPanel chatArea;
-    MediaPanel screen;
+    private JPanel screen;
 
     //define instances of client and server
     Client me;
+    AudioCapture myCapture;
 
     //define buttons
     public static JButton connect;
     public static JButton disconnect;
+    public static JButton stop;
+    public static JButton record;
+    public static JButton sendAudio;
+    private JButton retreive;
 
     //define text fields
     private JTextField serverHostName;
@@ -100,8 +105,8 @@ public class VoipGUI extends JFrame implements ActionListener {
     public VoipGUI() {
 
         firstTimeStartPressed = true;
-        availableFileInfo = new ArrayList<Object>();
-        stringsToDisplay = new ArrayList<String>();
+        availableFileInfo = new ArrayList<JLabel>();
+        myCapture = new AudioCapture();
 
         setLayout(new GridBagLayout());
         GridBagConstraints position = new GridBagConstraints();
@@ -110,7 +115,6 @@ public class VoipGUI extends JFrame implements ActionListener {
         //Adding all panels to JFrame
         input = new JPanel(new GridBagLayout());
         input.setPreferredSize(new Dimension(1000, 200));
-        //input.setBorder(new EmptyBorder(15, 0, 30, 20));
         border = new TitledBorder("Connection Input Information");
         border.setBorder(new LineBorder(Color.BLACK, 3));
         border.setTitleFont(new Font("Arial", Font.BOLD, 20));
@@ -128,24 +132,21 @@ public class VoipGUI extends JFrame implements ActionListener {
         position.insets =  new Insets(0, 0, 0, -280);
         add(viewArea,position);
 
-        screen = new MediaPanel();
-        screen.setPreferredSize(new Dimension(970, 480));
-        screen.setBorder(new LineBorder(Color.BLACK, 3));
+        screen = new JPanel();
+        screen.setPreferredSize(new Dimension(400, 380));
         position = makeConstraints(0, 0, 1, 1, GridBagConstraints.LINE_START);
-        position.insets =  new Insets(0, 0, 0, 0);
+        position.insets =  new Insets(50, -100, 0, 0);
         viewArea.add(screen,position);
 
         //Adding all panels to JFrame
         optionsPanel = new JPanel(new GridBagLayout());
         optionsPanel.setPreferredSize(new Dimension(1000, 100));
-        optionsPanel.setBackground(Color.RED);
         position = makeConstraints(10, 6, 1, 3, GridBagConstraints.LINE_END);
         position.insets =  new Insets(0, 0, 0, -280);
         add(optionsPanel,position);
 
         chatArea = new JPanel(new GridBagLayout());
         chatArea.setPreferredSize(new Dimension(400, 790));
-        chatArea.setBackground(Color.BLUE);
         position = makeConstraints(3, 6, 1, 2, GridBagConstraints.LINE_END);
         position.insets =  new Insets(-690, -300, 0, 2);
         add(chatArea,position);
@@ -182,7 +183,6 @@ public class VoipGUI extends JFrame implements ActionListener {
         //Place the textfields
         serverHostName = new JTextField("", 20);
         position = makeConstraints(2, 1, 1, 1, GridBagConstraints.LINE_START);
-        //serverHostName.setMinimumSize(serverHostName.getPreferredSize());
         position.insets =  new Insets(15, 15, 0, 20);
         input.add(serverHostName, position);
 
@@ -198,11 +198,15 @@ public class VoipGUI extends JFrame implements ActionListener {
         position.insets =  new Insets(40, 100, 0, 20);
         input.add(connect, position);
 
+        retreive = new JButton( "Retreive Audio Files" );
+        retreive.setForeground(Color.BLACK);
+        position = makeConstraints(0, 0, 1, 1, GridBagConstraints.LINE_START);
+        position.insets =  new Insets(-400, 25, 0, 0);
+        viewArea.add(retreive, position);
+
         disconnect = new JButton();
         try {
             Image img = ImageIO.read(getClass().getResource("images/hangup.png"));
-            //Image img = ImageIO.read(new File("images/hangup.png"));
-            //Image img = icon.getImage() ;
             Image newimg = img.getScaledInstance(70, 70,  java.awt.Image.SCALE_SMOOTH);
             ImageIcon icon = new ImageIcon( newimg );
             disconnect.setIcon(icon);
@@ -210,8 +214,47 @@ public class VoipGUI extends JFrame implements ActionListener {
             ex.printStackTrace();
         }
         position = makeConstraints(0, 0, 1, 1, GridBagConstraints.LINE_START);
-        position.insets =  new Insets(10, 0, 0, 20);
-        optionsPanel.add(disconnect, position);
+        position.insets =  new Insets(10, -300, 0, 0);
+       // optionsPanel.add(disconnect, position);
+
+        stop = new JButton();
+        try {
+            Image img = ImageIO.read(getClass().getResource("images/stop.png"));
+            Image newimg = img.getScaledInstance(70, 70,  java.awt.Image.SCALE_SMOOTH);
+            ImageIcon icon = new ImageIcon( newimg );
+            stop.setIcon(icon);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        position = makeConstraints(0, 0, 1, 1, GridBagConstraints.LINE_START);
+        position.insets =  new Insets(10, 0, 0, 0);
+        optionsPanel.add(stop, position);
+
+        record = new JButton();
+        try {
+            Image img = ImageIO.read(getClass().getResource("images/record.png"));
+            Image newimg = img.getScaledInstance(70, 70,  java.awt.Image.SCALE_SMOOTH);
+            ImageIcon icon = new ImageIcon( newimg );
+            record.setIcon(icon);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        position = makeConstraints(1, 0, 1, 1, GridBagConstraints.LINE_START);
+        position.insets =  new Insets(10, 150, 0, 0);
+        optionsPanel.add(record, position);
+
+        sendAudio = new JButton();
+        try {
+            Image img = ImageIO.read(getClass().getResource("images/send.png"));
+            Image newimg = img.getScaledInstance(70, 70,  java.awt.Image.SCALE_SMOOTH);
+            ImageIcon icon = new ImageIcon( newimg );
+            sendAudio.setIcon(icon);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        position = makeConstraints(2, 0, 1, 1, GridBagConstraints.LINE_START);
+        position.insets =  new Insets(10, 150, 0, 0);
+        optionsPanel.add(sendAudio, position);
 
         //create and add menu items
         menu = new JMenuBar();
@@ -256,6 +299,7 @@ public class VoipGUI extends JFrame implements ActionListener {
         file.addActionListener(this);
         quit.addActionListener(this);
         reset.addActionListener(this);
+        retreive.addActionListener(this);
 
         //disable buttons by default
         disconnect.setEnabled(false);
@@ -290,40 +334,50 @@ public class VoipGUI extends JFrame implements ActionListener {
             }
         }
 
-        if (e.getSource() == disconnect) {
-                //TODO do not close out program, only terminate connection
+        if (e.getSource() == retreive) {
+                createFileLabels();
         }
-        updateCommandLine();
-        //cmdLine.repaint();
+    }
+
+    public void createFileLabels() {
+
+        File folder = new File("audioFiles/");
+        File[] listOfFiles = folder.listFiles();
+
+        for (int i = 0; i < listOfFiles.length; i++) {
+            if (listOfFiles[i].isFile()) {
+
+                String name = listOfFiles[i].getName();
+                JLabel newLabel = new JLabel(listOfFiles[i].getName());
+                newLabel.setBorder(new LineBorder(Color.BLACK, 1));
+                newLabel.setFont(uiFont);
+                newLabel.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        System.out.println("Action listener added");
+                        myCapture.play("audioFiles/" + name);
+                    }
+                });
+                availableFileInfo.add(newLabel);
+            }
+        }
+        displayAudioFiles();
     }
 
     //Method to update command line JPanel area
-    public void updateCommandLine() {
-
-        //cmdLine.removeAll();
-        //cmdLine.revalidate();
-        //cmdLine.repaint();
+    public void displayAudioFiles() {
 
         GridBagConstraints position = new GridBagConstraints();
-        position = makeConstraints(0, 0, 1, 1, GridBagConstraints.FIRST_LINE_START);
-        position.insets =  new Insets(-100, -240, 0, 0);
+        int insetFromTop = 0;
 
-        JList list = new JList(stringsToDisplay.toArray());
-        list.setLayoutOrientation(JList.VERTICAL);
-        list.setVisibleRowCount(10);
-        list.setFont(new Font("Arial", Font.PLAIN, 16));
-        //cmdLine.add(list, position);
-    }
-
-
-    //Method to set the width of all table columns
-    public void setColunmWidth(JTable table) {
-
-        TableColumnModel tcm = table.getColumnModel();
-
-        for (int i = 0; i < (tcm.getColumnCount()); i++) {
-            tcm.getColumn(i).setPreferredWidth(90);
+        for(int i = 0; i < availableFileInfo.size(); ++i) {
+            position = makeConstraints(0, 0, 1, 1, GridBagConstraints.FIRST_LINE_START);
+            position.insets =  new Insets(insetFromTop, 0, 0, 0);
+            screen.add(availableFileInfo.get(i), position);
+            insetFromTop = insetFromTop + 30;
         }
+        screen.validate();
+        screen.repaint();
     }
 
     /**
