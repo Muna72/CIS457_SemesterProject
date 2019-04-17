@@ -133,6 +133,7 @@ public class VoipGUI extends JFrame implements ActionListener {
         add(viewArea,position);
 
         screen = new JPanel();
+        screen.setLayout(new GridBagLayout());
         screen.setPreferredSize(new Dimension(400, 380));
         position = makeConstraints(0, 0, 1, 1, GridBagConstraints.LINE_START);
         position.insets =  new Insets(50, -100, 0, 0);
@@ -349,12 +350,15 @@ public class VoipGUI extends JFrame implements ActionListener {
 
                 String name = listOfFiles[i].getName();
                 JLabel newLabel = new JLabel(listOfFiles[i].getName());
-                newLabel.setBorder(new LineBorder(Color.BLACK, 1));
-                newLabel.setFont(uiFont);
+                newLabel.setBorder(new LineBorder(Color.BLACK, 2));
+                Border border = newLabel.getBorder();
+                Border margin = new EmptyBorder(5,5,5,5);
+                newLabel.setBorder(new CompoundBorder(border, margin));
+                newLabel.setFont(new Font("SansSerif Bold", Font.BOLD, 16));
                 newLabel.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
-                        System.out.println("Action listener added");
+                        System.out.println("Action listener ran!");
                         myCapture.play("audioFiles/" + name);
                     }
                 });
@@ -367,14 +371,14 @@ public class VoipGUI extends JFrame implements ActionListener {
     //Method to update command line JPanel area
     public void displayAudioFiles() {
 
-        GridBagConstraints position = new GridBagConstraints();
-        int insetFromTop = 0;
+        int insetFromTop = -320;
 
         for(int i = 0; i < availableFileInfo.size(); ++i) {
-            position = makeConstraints(0, 0, 1, 1, GridBagConstraints.FIRST_LINE_START);
+            GridBagConstraints position = new GridBagConstraints();
+            position = makeConstraints(0, 0, 1, 1, GridBagConstraints.LINE_START);
             position.insets =  new Insets(insetFromTop, 0, 0, 0);
             screen.add(availableFileInfo.get(i), position);
-            insetFromTop = insetFromTop + 30;
+            insetFromTop = insetFromTop + 80;
         }
         screen.validate();
         screen.repaint();
