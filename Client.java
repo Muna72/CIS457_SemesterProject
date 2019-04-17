@@ -9,6 +9,9 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.AudioFileFormat;
 public class Client{
 	private Socket socket;
 	private BufferedReader br;
@@ -17,6 +20,7 @@ public class Client{
 
 	private ObjectInputStream ois;
 	AudioCapture myCap = new AudioCapture();
+
 
 	public Client(String ip, String uname, boolean term){
 		try{
@@ -37,16 +41,16 @@ public class Client{
 						p = (Packet)ois.readObject();
 						if(p.type==CommandType.MESSAGE){
 
-							if(term) 
+							if(term)
 								System.out.println(p.uname+": "+p.message);
-							else 
+							else
 								VoipGUI.chat.append(p.uname + ": " + p.message);
 						}
 					}
 				}catch(Exception e){
 					System.err.println(e);}
 			}).start();
-			//UDP Sending
+			//UDP reseives data
 			new Thread(()->{
 				try{
 					byte[] buffer;
@@ -65,9 +69,9 @@ public class Client{
 					//}
 				}catch(Exception e){System.out.println("Error "+e);}
 			}).start();
-
+//sends udp
 			new Thread(()->{
-				DatagramPacket packet; 
+				DatagramPacket packet;
 				byte[] buffer;
 				InetAddress address;
 				DatagramSocket socket;
@@ -80,7 +84,7 @@ public class Client{
 						buffer=testing[i].getBytes();
 
 						packet = new DatagramPacket(buffer, buffer.length, address, 9092);
-						socket.send(packet);		
+						socket.send(packet);
 					}
 
 					DatagramSocket s= new DatagramSocket();
@@ -109,7 +113,7 @@ public class Client{
 						System.out.println(i);
 					}
 				}}
-			else 
+			else
 				VoipGUI.messageInput.addActionListener(e->{
 					try{
 						Packet p = new Packet(CommandType.MESSAGE);
@@ -146,22 +150,65 @@ public class Client{
 			VoipGUI.stop.addActionListener(e->{
 				try{
 					myCap.finish();
-					myCap.start(uname);
 				}
 				catch(Exception i){
 					System.out.println(i);
 				}
 			});
-
+//sending audio
 			VoipGUI.sendAudio.addActionListener(e->{
 				try{
-
+					byte b[] = new byte[1024];
+					InetAddress address = InetAddress.getByName("233.0.0.2");
 					//TODO still need to send it
+					DatagramSocket socket= new DatagramSocket();
+					FileInputStream file = new FileInputStream("audioCapture/"+uname+".wave");
+					for(int i=0; file.available()!=0; i++){
+						b[i]=(byte)file.read();
+					}
+					file.close();
+					DatagramPacket packet = new DatagramPacket(b,b.length, address, 9093);
+					socket.send(packet);
+					socket.close();
 				}
 				catch(Exception i){
 					System.out.println(i);
 				}
 			});
+			// receives audio
+			new Thread(()->{
+				try{
+					byte[] buffer;
+					ByteArrayOutputStream output = new ByteArrayOutputStream();
+					DatagramPacket packet;
+					MulticastSocket socket = new MulticastSocket(9093);
+					InetAddress address=  InetAddress.getByName("233.0.0.2");
+					socket.joinGroup(address);
+					Boolean flag = false;
+					while(true){
+						buffer= new byte[1024];
+						packet= new DatagramPacket(buffer, buffer.length);
+						socket.receive(packet);
+						//packet.getData();
+						if(packet.getLength()>0){
+								output.write(packet.getData());
+//							totalPacket.add(packet.getData());
+							  flag = true;
+	//						ByteArrayInputStream baiss = new ByteArrayInputStream(packet.getData());
+
+			//
+						}else{
+						if(flag) {
+							byte[] out = output.toByteArray();
+							ByteArrayInputStream baiss = new ByteArrayInputStream(out);
+							AudioInputStream ais = new AudioInputStream(baiss, myCap.getAudioFormat(), out.length);
+							AudioSystem.write(ais, AudioFileFormat.Type.WAVE, new File(address.getHostAddress()+".wav"));
+							flag = false;
+						}}
+										}
+
+				}catch(Exception e){System.out.println("Error "+e);}
+			}).start();
 
 		}
 
@@ -175,10 +222,10 @@ public class Client{
 			return socket.getLocalAddress().getHostAddress();
 		}catch(Exception e){
 			System.err.println(e);
-		}	
+		}
 		return null;}
 
-	
+
 	public static void main(String args[]){
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Enter IP Username");
