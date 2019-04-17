@@ -136,7 +136,7 @@ public class Client{
 
 			VoipGUI.record.addActionListener(e->{
 				try{
-				//	myCap.start();
+					myCap.start("audioFiles/"+uname+".wav");
 				}
 				catch(Exception i){
 					System.out.println(i);
