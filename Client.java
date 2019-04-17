@@ -16,10 +16,9 @@ public class Client{
 	private String ip;
 
 	private ObjectInputStream ois;
-	RealTimeAudioCapture myCap = new RealTimeAudioCapture();
+	AudioCapture myCap = new AudioCapture();
 
 	public Client(String ip, String uname, boolean term){
-				RealTimeAudioCapture ac= new RealTimeAudioCapture();
 		try{
 			this.ip = ip;
 			socket = new Socket(ip, 9090);
@@ -61,7 +60,7 @@ public class Client{
 						socket.receive(packet);
 							//if(!packet.getAddress().equals(InetAddress.getByName(getIP()))){
 						System.out.println(new String(packet.getData()));
-						ac.playAudio(packet.getData());
+						//myCap.playAudio(packet.getData());
 							}
 					//}
 				}catch(Exception e){System.out.println("Error "+e);}
@@ -85,12 +84,12 @@ public class Client{
 					}
 
 					DatagramSocket s= new DatagramSocket();
-					ac.start(t->{
+				/*	myCap.start(t->{
 						try{
 							s.send(new DatagramPacket(t,t.length,address, 9092));}
 						catch(Exception e){System.out.println(e);};});
 
-				}catch(Exception e){
+				*/}catch(Exception e){
 				}
 			}).start();
 
@@ -146,8 +145,8 @@ public class Client{
 
 			VoipGUI.stop.addActionListener(e->{
 				try{
-					myCap.stop();
-                    myCap.save(uname);
+					myCap.finish();
+					myCap.start(uname);
 				}
 				catch(Exception i){
 					System.out.println(i);
