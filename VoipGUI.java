@@ -357,7 +357,7 @@ public class VoipGUI extends JFrame implements ActionListener {
 
     public void createFileLabels() {
 
-        File folder = new File("audioFiles/");
+        File folder = new File("audioCapture/");
         File[] listOfFiles = folder.listFiles();
 
         for (int i = 0; i < listOfFiles.length; i++) {

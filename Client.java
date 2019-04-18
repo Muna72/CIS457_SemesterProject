@@ -1,5 +1,6 @@
 import java.net.*;
 import java.io.*;
+import java.util.Arrays;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 import java.io.Serializable;
@@ -12,12 +13,16 @@ import java.net.MulticastSocket;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.AudioFileFormat;
+import java.io.File;
+import java.nio.file.Files;
+import java.io.FileOutputStream;
 public class Client{
 	private Socket socket;
 	private BufferedReader br;
 	private String uname;
 	private String ip;
 
+	private Thread startRecording;
 	private ObjectInputStream ois;
 	AudioCapture myCap = new AudioCapture();
 
@@ -62,11 +67,8 @@ public class Client{
 						buffer= new byte[1024];
 						packet= new DatagramPacket(buffer, buffer.length);
 						socket.receive(packet);
-							//if(!packet.getAddress().equals(InetAddress.getByName(getIP()))){
 						System.out.println(new String(packet.getData()));
-						//myCap.playAudio(packet.getData());
 							}
-					//}
 				}catch(Exception e){System.out.println("Error "+e);}
 			}).start();
 //sends udp
@@ -88,12 +90,7 @@ public class Client{
 					}
 
 					DatagramSocket s= new DatagramSocket();
-				/*	myCap.start(t->{
-						try{
-							s.send(new DatagramPacket(t,t.length,address, 9092));}
-						catch(Exception e){System.out.println(e);};});
-
-				*/}catch(Exception e){
+				}catch(Exception e){
 				}
 			}).start();
 
@@ -137,10 +134,15 @@ public class Client{
                     System.out.println(i);
                 }
             });
-
 			VoipGUI.record.addActionListener(e->{
 				try{
-					myCap.start("audioFiles/"+uname+".wav");
+					startRecording = new Thread(()->{
+						AudioCapture myCap = new AudioCapture();
+						try{
+						myCap.start("audioCapture/"+InetAddress.getLocalHost().getHostName()+".wav");
+						}catch(IOException x){}
+						});
+					startRecording.start();
 				}
 				catch(Exception i){
 					System.out.println(i);
@@ -149,7 +151,9 @@ public class Client{
 
 			VoipGUI.stop.addActionListener(e->{
 				try{
+				
 					myCap.finish();
+					startRecording.interrupt();
 				}
 				catch(Exception i){
 					System.out.println(i);
@@ -157,55 +161,53 @@ public class Client{
 			});
 //sending audio
 			VoipGUI.sendAudio.addActionListener(e->{
+				
+				System.out.println("166");
 				try{
-					byte b[] = new byte[1024];
-					InetAddress address = InetAddress.getByName("233.0.0.2");
-					//TODO still need to send it
-					DatagramSocket socket= new DatagramSocket();
-					FileInputStream file = new FileInputStream("audioCapture/"+uname+".wave");
-					for(int i=0; file.available()!=0; i++){
-						b[i]=(byte)file.read();
-					}
-					file.close();
-					DatagramPacket packet = new DatagramPacket(b,b.length, address, 9093);
+				DatagramSocket socket = new DatagramSocket();
+				InetAddress address = InetAddress.getByName("233.0.0.2");
+				byte[] array = Files.readAllBytes(new File("audioCapture/"+InetAddress.getLocalHost().getHostName()+".wav").toPath());
+				byte twoArray[][]=chunkArray(array, array.length/1024); 
+				DatagramPacket packet;
+				System.out.println("173");
+				for(int i =0; i<twoArray.length;i++){
+					packet = new DatagramPacket(twoArray[i],twoArray[i].length,address, 9093);
+					System.out.println(packet.getData());
+				System.out.println("177"+i+","+twoArray.length);
 					socket.send(packet);
+				} 
 					socket.close();
 				}
 				catch(Exception i){
-					System.out.println(i);
+					System.out.println(i+"ERROR");
 				}
 			});
+
 			// receives audio
 			new Thread(()->{
+				System.out.println("189");
 				try{
-					byte[] buffer;
+					
+					InetAddress address=  InetAddress.getByName("233.0.0.2");
+					byte[] buffer = new byte[1024];
+				System.out.println("195");
 					ByteArrayOutputStream output = new ByteArrayOutputStream();
+					File file= new File(InetAddress.getLocalHost().getHostName()+".wav");
+					if(!file.exists()){
+					file.createNewFile();}
+					FileOutputStream ostream = new FileOutputStream(file);
+					InputStream inputfile = new FileInputStream(file);
 					DatagramPacket packet;
 					MulticastSocket socket = new MulticastSocket(9093);
-					InetAddress address=  InetAddress.getByName("233.0.0.2");
 					socket.joinGroup(address);
-					Boolean flag = false;
 					while(true){
-						buffer= new byte[1024];
-						packet= new DatagramPacket(buffer, buffer.length);
-						socket.receive(packet);
-						//packet.getData();
-						if(packet.getLength()>0){
-								output.write(packet.getData());
-//							totalPacket.add(packet.getData());
-							  flag = true;
-	//						ByteArrayInputStream baiss = new ByteArrayInputStream(packet.getData());
-
-			//
-						}else{
-						if(flag) {
-							byte[] out = output.toByteArray();
-							ByteArrayInputStream baiss = new ByteArrayInputStream(out);
-							AudioInputStream ais = new AudioInputStream(baiss, myCap.getAudioFormat(), out.length);
-							AudioSystem.write(ais, AudioFileFormat.Type.WAVE, new File(address.getHostAddress()+".wav"));
-							flag = false;
-						}}
-										}
+				System.out.print("204");
+					packet = new DatagramPacket(buffer,buffer.length);
+					socket.receive(packet);
+					System.out.println(packet.getData()+"data");
+					ostream.write(packet.getData());
+						}
+					
 
 				}catch(Exception e){System.out.println("Error "+e);}
 			}).start();
@@ -224,6 +226,22 @@ public class Client{
 			System.err.println(e);
 		}
 		return null;}
+
+	public static byte[][] chunkArray(byte[] array, int chunkSize) {
+        int numOfChunks = (int)Math.ceil((double)array.length / chunkSize);
+        byte[][] output = new byte[numOfChunks][];
+
+        for(int i = 0; i < numOfChunks; ++i) {
+            int start = i * chunkSize;
+            int length = Math.min(array.length - start, chunkSize);
+
+            byte[] temp = new byte[length];
+            System.arraycopy(array, start, temp, 0, length);
+            output[i] = temp;
+        }
+
+        return output;
+    }
 
 
 	public static void main(String args[]){
