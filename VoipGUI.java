@@ -359,6 +359,7 @@ public class VoipGUI extends JFrame implements ActionListener {
 
         File folder = new File("audioCapture/");
         File[] listOfFiles = folder.listFiles();
+        availableFileInfo.clear();
 
         for (int i = 0; i < listOfFiles.length; i++) {
             if (listOfFiles[i].isFile()) {
@@ -373,8 +374,7 @@ public class VoipGUI extends JFrame implements ActionListener {
                 newLabel.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
-                        System.out.println("Action listener ran!");
-                        myCapture.play("audioFiles/" + name);
+                        myCapture.play("audioCapture/" + name);
                     }
                 });
                 availableFileInfo.add(newLabel);
@@ -386,6 +386,7 @@ public class VoipGUI extends JFrame implements ActionListener {
     //Method to update command line JPanel area
     public void displayAudioFiles() {
 
+        screen.removeAll();
         int insetFromTop = -320;
 
         for(int i = 0; i < availableFileInfo.size(); ++i) {
