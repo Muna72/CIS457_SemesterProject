@@ -2,6 +2,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.Socket;
 
 import javax.sound.sampled.AudioFormat;
@@ -30,7 +31,8 @@ public class Clientx {
 	AudioInputStream audioInputStream;
 	BufferedOutputStream out = null;
 	BufferedInputStream in = null;
-	Socket sock = null;
+    Socket sock = null;
+    public InetAddress addr;
 	SourceDataLine sourceDataLine;
 	/**
 	 * Launch the application.
