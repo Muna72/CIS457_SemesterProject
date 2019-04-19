@@ -64,7 +64,7 @@ Serverx() throws LineUnavailableException, HeadlessException, UnknownHostExcepti
         sourceDataLine = (SourceDataLine) AudioSystem.getLine(dataLineInfo);
         sourceDataLine.open(audioFormat);
         sourceDataLine.start();
-        MyService = new ServerSocket(9876);
+        MyService = new ServerSocket(9096);
         clientSocket = MyService.accept();
         captureAudio();
         input = new BufferedInputStream(clientSocket.getInputStream());
@@ -100,7 +100,7 @@ public static void main(String s[]) throws LineUnavailableException, UnknownHost
     
 }
 
-private void captureAudio() {
+public void captureAudio() {
     try {
 
         audioFormat = getAudioFormat();

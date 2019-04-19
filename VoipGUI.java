@@ -385,6 +385,8 @@ public class VoipGUI extends JFrame implements ActionListener {
                     try {
                 serverTwo = new Serverx();
                 //serverTwo.main(new String[0]);
+                //serverTwo.captureAudio();
+                //serverTwo.main(new String[0]);
             } catch (HeadlessException e1) {
                 // TODO Auto-generated catch block
                 e1.printStackTrace();
