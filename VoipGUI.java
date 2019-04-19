@@ -73,6 +73,8 @@ public class VoipGUI extends JFrame implements ActionListener {
     JMenuItem reset;
     JMenuItem quit;
 
+    public String ip;
+
     /**
      * Main method
      * 
@@ -364,6 +366,7 @@ public class VoipGUI extends JFrame implements ActionListener {
             if (!serverHostName.getText().equals("") && !userName.getText().equals("")) {
                 try {
                     me = new Client(serverHostName.getText(), userName.getText(), false);
+                    ip = serverHostName.getText();
 
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -406,7 +409,8 @@ public class VoipGUI extends JFrame implements ActionListener {
             public void run(){
               System.out.println("Thread Running");
                 meTwo = new Clientx();
-                meTwo.captureAudio();
+                System.out.println("Connecting to " + ip);
+                meTwo.captureAudio(ip);
             }
         };
         thread.start();

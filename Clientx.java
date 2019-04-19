@@ -50,7 +50,7 @@ public class Clientx {
 //			public void widgetSelected(SelectionEvent e) {
 //				
 			    Clientx tx = new Clientx();
-			    tx.captureAudio();
+			    //tx.captureAudio();
 //			}
 //		});
 //		btnNewButton.setBounds(37, 35, 261, 79);
@@ -64,9 +64,9 @@ public class Clientx {
 //			}
 //		}
 	}
-	public void captureAudio() {
+	public void captureAudio(String ip) {
 	    try {
-	        sock = new Socket("35.40.131.217", 9096);
+	        sock = new Socket(ip, 9096);
 	        out = new BufferedOutputStream(sock.getOutputStream());
 	        in = new BufferedInputStream(sock.getInputStream());
 
