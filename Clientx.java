@@ -66,7 +66,8 @@ public class Clientx {
 	}
 	public void captureAudio(String ip) {
 	    try {
-	        sock = new Socket(ip, 9096);
+            InetAddress address = InetAddress.getByName(ip);
+	        sock = new Socket(address, 9096);
 	        out = new BufferedOutputStream(sock.getOutputStream());
 	        in = new BufferedInputStream(sock.getInputStream());
 
